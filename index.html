@@ -28,6 +28,11 @@
     />
 
     <style>
+      /* [추가] 부드러운 스크롤 이동 */
+      html {
+        scroll-behavior: smooth;
+      }
+
       /* 프리미엄 디자인 시스템 변수 */
       :root {
         --primary: #111827;
@@ -165,7 +170,7 @@
 
       /* 메인 히어로 섹션 */
       .hero {
-        position: relative; /* 스크롤 UI 위치를 위한 속성 추가 */
+        position: relative;
         height: 100vh;
         display: flex;
         align-items: center;
@@ -209,7 +214,7 @@
         box-shadow: 0 15px 35px rgba(59, 130, 246, 0.5);
       }
 
-      /* --- [추가] 스크롤 유도 애니메이션 UI --- */
+      /* 스크롤 유도 애니메이션 UI */
       .scroll-indicator {
         position: absolute;
         bottom: 40px;
@@ -418,16 +423,11 @@
         z-index: 10;
         user-select: none;
       }
-      .slider-btn:hover:not(:disabled) {
+      .slider-btn:hover {
         background: var(--secondary);
         color: white;
         border-color: var(--secondary);
         box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
-      }
-      .slider-btn:disabled {
-        opacity: 0.25;
-        cursor: not-allowed;
-        box-shadow: none;
       }
       .slider-btn.prev {
         left: -5px;
@@ -663,7 +663,7 @@
         display: none;
       }
 
-      /* --- [추가] 모달(Modal) 창 스타일 --- */
+      /* 모달(Modal) 창 스타일 */
       .modal-overlay {
         position: fixed;
         top: 0;
@@ -678,6 +678,7 @@
         justify-content: center;
         opacity: 0;
         transition: opacity 0.3s ease;
+        cursor: pointer; /* [추가] 사파리 터치 인식을 위한 커서 포인터 */
       }
       .modal-overlay.active {
         display: flex;
@@ -694,6 +695,7 @@
         transform: translateY(20px);
         transition: transform 0.3s ease;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        cursor: default; /* 배경 클릭과 구분 */
       }
       .modal-overlay.active .modal-content {
         transform: translateY(0);
@@ -767,6 +769,29 @@
       }
 
       @media (max-width: 768px) {
+        /* [추가] 1. 모바일 환경에서 hover(애니메이션, 그림자 등) 효과 제거 */
+        .btn-kakao-large:hover {
+          transform: none;
+          box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+        .service-card:hover {
+          transform: none;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .service-card:hover .service-img {
+          transform: none;
+        }
+        .news-card:hover {
+          transform: none;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+        .news-card:hover .news-img {
+          transform: none;
+        }
+        .modal-btn:hover {
+          transform: none;
+        }
+
         .hero h1 {
           font-size: 2.6rem;
         }
@@ -781,10 +806,10 @@
         }
         .nav-menu {
           display: none;
-        } /* 상단 메뉴 숨김 */
+        }
         body {
           padding-bottom: 70px;
-        } /* 탭바 여백 */
+        }
 
         .slider-dots {
           display: flex;
@@ -839,21 +864,16 @@
           color: #191919;
         }
       }
-      @media (hover: none) {
-        *:hover {
-          all: unset;
-        }
-      }
     </style>
   </head>
-  <body>
+  <body id="hero">
     <header id="main-header">
       <div class="container nav-wrapper">
-        <a href="index.html" class="logo">청소<span>공식</span></a>
+        <a href="#hero" class="logo">청소<span>공식</span></a>
         <nav class="nav-menu">
-          <a href="portfolio.html">시공 사례</a>
-          <a href="news.html">청소 꿀팁</a>
-          <a href="qna.html">Q&A</a>
+          <a href="#portfolio">시공 사례</a>
+          <a href="#news">청소 꿀팁</a>
+          <a href="#faq">Q&A</a>
           <a href="#" class="btn-nav-kakao open-modal">상담하기</a>
         </nav>
       </div>
@@ -865,8 +885,7 @@
           <h1>디테일이 공간의<br />품격을 결정합니다</h1>
           <p>
             보이지 않는 곳의 유해물질 및 미세 분진까지 완벽하게 제거합니다. 하청
-            없는 100% 본사 직영팀의 차원이 다른 프리미엄 홈 딥클리닝
-            솔루션.테스트 테스트 테스트
+            없는 100% 본사 직영팀의 차원이 다른 프리미엄 홈 딥클리닝 솔루션.
           </p>
           <a href="#" class="btn-kakao-large open-modal">상담하기</a>
         </div>
@@ -1094,46 +1113,6 @@
                     </p>
                   </div>
                 </div>
-
-                <div class="ba-card">
-                  <div class="ba-images">
-                    <div class="ba-img-wrapper">
-                      <img
-                        src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=400&auto=format&fit=crop"
-                        alt="주방 후드 청소 전"
-                      />
-                      <span class="ba-badge badge-before">Before</span>
-                    </div>
-                    <div class="ba-img-wrapper">
-                      <img
-                        src="https://images.unsplash.com/photo-1565183997392-2f6f122e5912?q=80&w=400&auto=format&fit=crop"
-                        alt="주방 후드 청소 후"
-                      />
-                      <span class="ba-badge badge-after">After</span>
-                    </div>
-                  </div>
-                  <div class="ba-content">
-                    <h3>tertreterterterteㄹㅇㄴㄹㄴㅇ</h3>
-                    <p>
-                      오랜 조리로 가스레인지 주변에 고착된 유지분 및 탄 자국을
-                      자재 손상 없는 전용 약품 젤로 완벽 박리했습니다.
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  class="ba-card"
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                >
-                  <div class="ba-content">
-                    <h3>시공사례가 더 궁금하신가요?</h3>
-                    <p>블로그에서 더 많은 시공사례를 확인해보세요!</p>
-                  </div>
-                </div>
               </div>
             </div>
             <button class="slider-btn prev" aria-label="이전 슬라이드">
@@ -1165,7 +1144,7 @@
           >
             <div class="slider-wrapper">
               <div class="slider-track" style="gap: 30px">
-                <a href="news-detail.html" class="news-card">
+                <div class="news-card">
                   <img
                     src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=600&auto=format&fit=crop"
                     alt="화장실 관리법"
@@ -1182,9 +1161,9 @@
                       있습니다.
                     </p>
                   </div>
-                </a>
+                </div>
 
-                <a href="news-detail.html" class="news-card">
+                <div class="news-card">
                   <img
                     src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?q=80&w=600&auto=format&fit=crop"
                     alt="매트리스 케어 현장"
@@ -1201,9 +1180,9 @@
                       나오는지 직접...
                     </p>
                   </div>
-                </a>
+                </div>
 
-                <a href="news-detail.html" class="news-card">
+                <div class="news-card">
                   <img
                     src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=600&auto=format&fit=crop"
                     alt="새집증후군"
@@ -1220,56 +1199,7 @@
                       공법을 소개합니다.
                     </p>
                   </div>
-                </a>
-
-                <a href="news-detail.html" class="news-card">
-                  <img
-                    src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=600&auto=format&fit=crop"
-                    alt="새집증후군"
-                    class="news-img"
-                  />
-                  <div class="news-content">
-                    <span class="news-date">Expert Column</span>
-                    <h3>zzzzzzzzzzz</h3>
-                    <p>
-                      신축 브랜드 아파트 입주 시 필수 점검 사항인 베이크아웃의
-                      명확한 한계점과 유해 화학 물질을 원천 차단하는 과학적
-                      공법을 소개합니다.
-                    </p>
-                  </div>
-                </a>
-
-                <a href="news-detail.html" class="news-card">
-                  <img
-                    src="https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=600&auto=format&fit=crop"
-                    alt="새집증후군"
-                    class="news-img"
-                  />
-                  <div class="news-content">
-                    <span class="news-date">Expert Column</span>
-                    <h3>dsadasdadsdasd</h3>
-                    <p>
-                      신축 브랜드 아파트 입주 시 필수 점검 사항인 베이크아웃의
-                      명확한 한계점과 유해 화학 물질을 원천 차단하는 과학적
-                      공법을 소개합니다.
-                    </p>
-                  </div>
-                </a>
-
-                <a
-                  href="news-detail.html"
-                  class="news-card"
-                  style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                  "
-                >
-                  <div class="news-content">
-                    <h3>시공사례가 더 궁금하신가요?</h3>
-                    <p>블로그에서 더 많은 시공사례를 확인해보세요!</p>
-                  </div>
-                </a>
+                </div>
               </div>
             </div>
             <button class="slider-btn prev" aria-label="이전 슬라이드">
@@ -1330,7 +1260,6 @@
             </details>
           </div>
         </div>
-        <a href="qna.html" class="btn-faq-more reveal">더 많은 Q&A 보기</a>
       </section>
 
       <section id="contact" class="cta">
@@ -1368,19 +1297,19 @@
     </footer>
 
     <nav class="bottom-nav">
-      <a href="index.html" class="bottom-nav-item">
+      <a href="#hero" class="bottom-nav-item">
         <span class="icon">🏠</span>
         <span class="text">홈</span>
       </a>
-      <a href="portfolio.html" class="bottom-nav-item">
+      <a href="#portfolio" class="bottom-nav-item">
         <span class="icon">✨</span>
         <span class="text">시공사례</span>
       </a>
-      <a href="news.html" class="bottom-nav-item">
+      <a href="#news" class="bottom-nav-item">
         <span class="icon">📰</span>
-        <span class="text">뉴스레터</span>
+        <span class="text">청소꿀팁</span>
       </a>
-      <a href="qna.html" class="bottom-nav-item">
+      <a href="#faq" class="bottom-nav-item">
         <span class="icon">💡</span>
         <span class="text">Q&A</span>
       </a>
@@ -1454,7 +1383,7 @@
         // 모달 열기
         modalBtns.forEach((btn) => {
           btn.addEventListener("click", (e) => {
-            e.preventDefault(); // 기본 링크 이동 방지
+            e.preventDefault();
             modal.classList.add("active");
           });
         });
@@ -1464,12 +1393,21 @@
           modal.classList.remove("active");
         });
 
-        // 모달창 바깥 배경 클릭 시 닫기
+        // [수정] 2. 모달창 바깥 배경 클릭 시 닫기 (사파리 터치 인식 추가)
         window.addEventListener("click", (e) => {
           if (e.target === modal) {
             modal.classList.remove("active");
           }
         });
+        window.addEventListener(
+          "touchstart",
+          (e) => {
+            if (e.target === modal) {
+              modal.classList.remove("active");
+            }
+          },
+          { passive: true },
+        );
 
         /* 4. 고성능 슬라이더 핵심 제어 스크립트 기능 정의 */
         function initSlider(sliderId) {
@@ -1496,7 +1434,10 @@
           function updateSliderPosition() {
             cols = getColumns();
             maxIndex = Math.max(0, items.length - cols);
+
+            // 인덱스 안전장치
             if (currentIndex > maxIndex) currentIndex = maxIndex;
+            if (currentIndex < 0) currentIndex = 0;
 
             if (items.length > 0) {
               const itemWidth = items[0].getBoundingClientRect().width;
@@ -1504,8 +1445,7 @@
               track.style.transform = `translateX(-${moveDistance}px)`;
             }
 
-            prevBtn.disabled = currentIndex === 0;
-            nextBtn.disabled = currentIndex === maxIndex;
+            // 하단 점(도트) 상태 제어 업데이트
             updateDots();
           }
 
@@ -1534,21 +1474,26 @@
             });
           }
 
+          // [수정] 3. 무한 루프 기능 (버튼 클릭)
           prevBtn.addEventListener("click", () => {
             if (currentIndex > 0) {
               currentIndex--;
-              updateSliderPosition();
+            } else {
+              currentIndex = maxIndex; // 무한 루프 (뒤로 감기)
             }
+            updateSliderPosition();
           });
 
           nextBtn.addEventListener("click", () => {
             if (currentIndex < maxIndex) {
               currentIndex++;
-              updateSliderPosition();
+            } else {
+              currentIndex = 0; // 무한 루프 (처음으로)
             }
+            updateSliderPosition();
           });
 
-          // 모바일 스와이프 제어
+          // [수정] 3. 무한 루프 기능 (모바일 스와이프 제어)
           let startX = 0;
           let isDragging = false;
           container.addEventListener(
@@ -1568,10 +1513,10 @@
               const distanceX = startX - endX;
 
               if (Math.abs(distanceX) > 40) {
-                if (distanceX > 0 && currentIndex < maxIndex) {
-                  currentIndex++;
-                } else if (distanceX < 0 && currentIndex > 0) {
-                  currentIndex--;
+                if (distanceX > 0) {
+                  currentIndex = currentIndex < maxIndex ? currentIndex + 1 : 0;
+                } else if (distanceX < 0) {
+                  currentIndex = currentIndex > 0 ? currentIndex - 1 : maxIndex;
                 }
                 updateSliderPosition();
               }
