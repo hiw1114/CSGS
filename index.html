@@ -50,6 +50,9 @@
         line-height: 1.6;
         overflow-x: hidden;
         background: #fff;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
       }
       a {
         text-decoration: none;
@@ -62,7 +65,12 @@
         max-width: 100%;
         display: block;
       }
-
+      a,
+      button,
+      input,
+      div {
+        -webkit-tap-highlight-color: transparent !important;
+      }
       .container {
         max-width: 1200px;
         margin: 0 auto;
