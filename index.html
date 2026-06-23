@@ -544,7 +544,7 @@
 
       /* 고객 만족의 목소리 (자동 슬라이드 흐름) 섹션 */
       .review-section {
-        background-color: #fff;
+        background-color: var(--bg-light);
         overflow: hidden;
       }
       .marquee-wrapper {
@@ -565,16 +565,17 @@
         z-index: 2;
         pointer-events: none;
       }
-      .marquee-wrapper::before {
+      /* 슬라이드 트랙 양 끝 투명도 */
+      /* .marquee-wrapper::before {
         left: 0;
         background: linear-gradient(to right, #fff 0%, transparent 100%);
       }
       .marquee-wrapper::after {
         right: 0;
         background: linear-gradient(to left, #fff 0%, transparent 100%);
-      }
+      } */
 
-      /* [수정 3] 무한 루프 시 튀는 현상 방지를 위해 패딩(padding-left)을 제거하고 계산식 최적화 */
+      /* 무한 루프 시 튀는 현상 방지를 위해 패딩(padding-left)을 제거하고 계산식 최적화 */
       .marquee-track {
         display: flex;
         gap: 24px;
@@ -607,7 +608,7 @@
       }
       .review-card .stars {
         color: #f59e0b;
-        font-size: 1.2rem;
+        font-size: 1rem;
         margin-bottom: 12px;
         letter-spacing: 2px;
       }
@@ -699,7 +700,7 @@
         overflow: hidden;
       }
 
-      /* Q&A 아코디언 섹션 */
+      /* FAQ 아코디언 섹션 */
       .faq-section {
         background-color: var(--bg-light);
       }
@@ -906,21 +907,21 @@
       }
 
       @media (max-width: 768px) {
-        /* [수정 1] 모바일 환경 햄버거 메뉴 애니메이션 및 스타일 설정 */
+        /* 모바일 환경 햄버거 메뉴 애니메이션 및 스타일 설정 */
         .hamburger {
           display: block;
           position: relative;
-          width: 28px;
-          height: 20px;
+          width: 20px;
+          height: 16px;
           z-index: 1001; /* 메뉴보다 항상 위에 표시 */
         }
         .hamburger span {
           position: absolute;
           left: 0;
           width: 100%;
-          height: 3px;
-          background-color: var(--primary);
-          border-radius: 3px;
+          height: 2px;
+          background-color: var(--text-muted);
+          border-radius: 4px;
           transition: all 0.3s ease-in-out;
         }
         .hamburger span:nth-child(1) {
@@ -976,7 +977,7 @@
           transform: translateY(-50%) rotate(-45deg);
         }
 
-        /* [수정 2] 위에서 아래로 떨어지는 메뉴 애니메이션 설정 */
+        /* 위에서 아래로 떨어지는 메뉴 애니메이션 설정 */
         .nav-menu {
           position: fixed;
           top: 0;
@@ -1013,7 +1014,7 @@
           transition-delay: 0s;
         }
         .nav-menu a {
-          font-size: 1.3rem;
+          font-size: 1rem;
         }
         .btn-nav-kakao {
           display: none;
@@ -1176,10 +1177,11 @@
         </button>
 
         <nav class="nav-menu" id="primary-navigation" aria-label="주요 메뉴">
+          <a href="#trust">회사 소개</a>
+          <a href="#services">서비스</a>
           <a href="#portfolio">시공 사례</a>
-          <a href="#reviews">고객 후기</a>
-          <a href="#news">청소 꿀팁</a>
-          <a href="#faq">Q&A</a>
+          <a href="#news">뉴스레터</a>
+          <a href="#faq">FAQ</a>
           <a href="#" class="btn-nav-kakao open-modal">상담하기</a>
         </nav>
       </div>
@@ -1755,7 +1757,7 @@
         <span class="icon">📰</span><span class="text">청소꿀팁</span>
       </a>
       <a href="#faq" class="bottom-nav-item">
-        <span class="icon">💡</span><span class="text">Q&A</span>
+        <span class="icon">💡</span><span class="text">FAQ</span>
       </a>
       <a href="#" class="bottom-nav-item highlight open-modal">
         <span class="icon">📝</span><span class="text">상담하기</span>
@@ -1801,7 +1803,6 @@
         reveals.forEach((reveal) => revealOnScroll.observe(reveal));
 
         // --- 2. 네비게이션 제어 (모바일 햄버거 메뉴) ---
-        // [수정 4] 스크롤 시 상단 네비를 숨기던 기존 코드를 삭제하여 네비가 상단에 항상 고정되게 만들었습니다.
         const hamburger = document.querySelector(".hamburger");
         const navMenu = document.querySelector(".nav-menu");
         const navOverlay = document.querySelector(".nav-overlay");
@@ -1819,7 +1820,10 @@
           } else {
             navMenu.removeAttribute("aria-hidden");
           }
-          hamburger.setAttribute("aria-expanded", String(Boolean(isMenuOpen())));
+          hamburger.setAttribute(
+            "aria-expanded",
+            String(Boolean(isMenuOpen())),
+          );
         }
 
         function setMenuOpen(open) {
@@ -1829,7 +1833,10 @@
           hamburger.classList.toggle("active", open);
           navOverlay.classList.toggle("active", open);
           document.body.classList.toggle("menu-open", open);
-          hamburger.setAttribute("aria-label", open ? "메뉴 닫기" : "메뉴 열기");
+          hamburger.setAttribute(
+            "aria-label",
+            open ? "메뉴 닫기" : "메뉴 열기",
+          );
           syncMenuAccessibility();
         }
 
