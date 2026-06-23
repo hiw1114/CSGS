@@ -70,6 +70,10 @@
         max-width: 100%;
         display: block;
       }
+      :focus-visible {
+        outline: 3px solid rgba(59, 130, 246, 0.45);
+        outline-offset: 4px;
+      }
       a,
       button,
       input,
@@ -123,6 +127,7 @@
       /* 상단 고정 네비게이션 바 */
       header {
         background: rgba(255, 255, 255, 0.95);
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
         position: fixed;
         width: 100%;
@@ -425,6 +430,7 @@
         height: 48px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.9);
+        -webkit-backdrop-filter: blur(4px);
         backdrop-filter: blur(4px);
         border: 1px solid var(--border-color);
         color: var(--primary);
@@ -787,6 +793,9 @@
       .bottom-nav {
         display: none;
       }
+      .nav-overlay {
+        display: none;
+      }
 
       /* 모달(Modal) 창 스타일 */
       .modal-overlay {
@@ -796,6 +805,7 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.5);
+        -webkit-backdrop-filter: blur(5px);
         backdrop-filter: blur(5px);
         z-index: 9999;
         display: none;
@@ -887,7 +897,9 @@
 
       /* --- [모바일 및 태블릿 반응형 최적화] --- */
       @media (max-width: 1024px) {
-        #portfolio-slider .ba-card,
+        #portfolio-slider .ba-card {
+          flex: 0 0 calc(50% - 20px);
+        }
         #news-slider .news-card {
           flex: 0 0 calc(50% - 15px);
         }
@@ -922,6 +934,34 @@
           bottom: 0;
         }
 
+        body.menu-open {
+          overflow: hidden;
+        }
+        body.menu-open header {
+          z-index: 2000;
+        }
+        .nav-overlay {
+          display: block;
+          position: fixed;
+          inset: 0;
+          background: rgba(17, 24, 39, 0.42);
+          -webkit-backdrop-filter: blur(2px);
+          backdrop-filter: blur(2px);
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+          transition:
+            opacity 0.28s ease,
+            visibility 0s linear 0.28s;
+          z-index: 998;
+        }
+        .nav-overlay.active {
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+          transition-delay: 0s;
+        }
+
         /* 햄버거 클릭 시 'X' 전환 애니메이션 */
         .hamburger.active span:nth-child(1) {
           top: 50%;
@@ -939,25 +979,38 @@
         /* [수정 2] 위에서 아래로 떨어지는 메뉴 애니메이션 설정 */
         .nav-menu {
           position: fixed;
-          top: -100vh; /* 화면 위쪽으로 숨김 */
+          top: 0;
           left: 0;
           right: 0;
           width: 100%;
           height: auto;
           padding: 80px 0 40px; /* 로고/햄버거(60px) 영역 확보 후 여백 */
           background: rgba(255, 255, 255, 0.98);
+          -webkit-backdrop-filter: blur(10px);
           backdrop-filter: blur(10px);
           flex-direction: column;
           justify-content: flex-start;
           gap: 30px;
-          transition: top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); /* 아래로 이동 */
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+          transform: translate3d(0, -110%, 0);
+          transition:
+            transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
+            opacity 0.28s ease,
+            visibility 0s linear 0.38s;
+          will-change: transform, opacity;
           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
           z-index: 999; /* 로고와 햄버거 버튼 아래로 깔리게 설정 */
           border-bottom-left-radius: 20px;
           border-bottom-right-radius: 20px;
         }
         .nav-menu.active {
-          top: 0; /* 화면 아래로 등장 */
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+          transform: translate3d(0, 0, 0);
+          transition-delay: 0s;
         }
         .nav-menu a {
           font-size: 1.3rem;
@@ -1028,6 +1081,12 @@
         }
         .slider-container {
           padding: 0;
+        }
+        .slider-wrapper {
+          touch-action: pan-y pinch-zoom;
+        }
+        .slider-track {
+          will-change: transform;
         }
         .slider-btn {
           display: none !important;
@@ -1100,16 +1159,23 @@
   </head>
   <body id="hero">
     <header id="main-header">
+      <div class="nav-overlay" aria-hidden="true"></div>
       <div class="container nav-wrapper">
         <a href="#hero" class="logo">청소<span class="equals">=</span>공식</a>
 
-        <button class="hamburger" aria-label="메뉴 열기">
+        <button
+          class="hamburger"
+          type="button"
+          aria-label="메뉴 열기"
+          aria-controls="primary-navigation"
+          aria-expanded="false"
+        >
           <span></span>
           <span></span>
           <span></span>
         </button>
 
-        <nav class="nav-menu">
+        <nav class="nav-menu" id="primary-navigation" aria-label="주요 메뉴">
           <a href="#portfolio">시공 사례</a>
           <a href="#reviews">고객 후기</a>
           <a href="#news">청소 꿀팁</a>
@@ -1736,24 +1802,65 @@
 
         // --- 2. 네비게이션 제어 (모바일 햄버거 메뉴) ---
         // [수정 4] 스크롤 시 상단 네비를 숨기던 기존 코드를 삭제하여 네비가 상단에 항상 고정되게 만들었습니다.
-        const header = document.getElementById("main-header");
         const hamburger = document.querySelector(".hamburger");
         const navMenu = document.querySelector(".nav-menu");
+        const navOverlay = document.querySelector(".nav-overlay");
+        const mobileMenuQuery = window.matchMedia("(max-width: 768px)");
 
-        // 햄버거 토글
-        if (hamburger) {
+        function isMenuOpen() {
+          return navMenu?.classList.contains("active");
+        }
+
+        function syncMenuAccessibility() {
+          if (!navMenu || !hamburger) return;
+
+          if (mobileMenuQuery.matches && !isMenuOpen()) {
+            navMenu.setAttribute("aria-hidden", "true");
+          } else {
+            navMenu.removeAttribute("aria-hidden");
+          }
+          hamburger.setAttribute("aria-expanded", String(Boolean(isMenuOpen())));
+        }
+
+        function setMenuOpen(open) {
+          if (!hamburger || !navMenu || !navOverlay) return;
+
+          navMenu.classList.toggle("active", open);
+          hamburger.classList.toggle("active", open);
+          navOverlay.classList.toggle("active", open);
+          document.body.classList.toggle("menu-open", open);
+          hamburger.setAttribute("aria-label", open ? "메뉴 닫기" : "메뉴 열기");
+          syncMenuAccessibility();
+        }
+
+        if (hamburger && navMenu && navOverlay) {
+          syncMenuAccessibility();
+
           hamburger.addEventListener("click", () => {
-            navMenu.classList.toggle("active");
-            hamburger.classList.toggle("active"); // [수정 1] X 애니메이션 토글 추가
+            setMenuOpen(!isMenuOpen());
+          });
+
+          navOverlay.addEventListener("click", () => setMenuOpen(false));
+
+          navMenu.querySelectorAll("a").forEach((link) => {
+            link.addEventListener("click", () => setMenuOpen(false));
+          });
+
+          document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && isMenuOpen()) {
+              setMenuOpen(false);
+              hamburger.focus();
+            }
+          });
+
+          window.addEventListener("resize", () => {
+            if (!mobileMenuQuery.matches && isMenuOpen()) {
+              setMenuOpen(false);
+            } else {
+              syncMenuAccessibility();
+            }
           });
         }
-        // 메뉴 클릭 시 닫기
-        navMenu.querySelectorAll("a").forEach((link) => {
-          link.addEventListener("click", () => {
-            navMenu.classList.remove("active");
-            hamburger.classList.remove("active"); // 메뉴 클릭 시 X를 다시 햄버거로 되돌림
-          });
-        });
 
         // --- 3. FAQ 아코디언 상호 배타적 제어 (하나만 열리게) ---
         const faqItems = document.querySelectorAll(".faq-item");
@@ -1804,12 +1911,13 @@
           const prevBtn = container.querySelector(".slider-btn.prev");
           const nextBtn = container.querySelector(".slider-btn.next");
           const dotsContainer = container.querySelector(".slider-dots");
-          const items = track.children;
+          if (!track || !prevBtn || !nextBtn || !dotsContainer) return;
+
+          const items = Array.from(track.children);
 
           let currentIndex = 0;
           let cols = getColumns();
           let maxIndex = Math.max(0, items.length - cols);
-          const gap = parseInt(container.getAttribute("data-gap")) || 0;
 
           function getColumns() {
             if (window.innerWidth <= 768) return 1;
@@ -1817,33 +1925,48 @@
             return parseInt(container.getAttribute("data-desktop-cols")) || 2;
           }
 
-          function updateSliderPosition() {
+          function getGap() {
+            const styles = window.getComputedStyle(track);
+            return (
+              parseFloat(styles.columnGap || styles.gap) ||
+              parseInt(container.getAttribute("data-gap")) ||
+              0
+            );
+          }
+
+          function getMoveDistance(index) {
+            if (items.length === 0) return 0;
+            return index * (items[0].getBoundingClientRect().width + getGap());
+          }
+
+          function moveTo(index) {
             cols = getColumns();
             maxIndex = Math.max(0, items.length - cols);
+            currentIndex = Math.min(Math.max(index, 0), maxIndex);
 
-            if (currentIndex > maxIndex) currentIndex = maxIndex;
-            if (currentIndex < 0) currentIndex = 0;
-
-            if (items.length > 0) {
-              const itemWidth = items[0].getBoundingClientRect().width;
-              const moveDistance = currentIndex * (itemWidth + gap);
-              track.style.transform = `translateX(-${moveDistance}px)`;
-            }
+            track.style.transform = `translate3d(-${getMoveDistance(currentIndex)}px, 0, 0)`;
             updateDots();
+          }
+
+          function updateSliderPosition() {
+            moveTo(currentIndex);
           }
 
           function createDots() {
             dotsContainer.innerHTML = "";
+            cols = getColumns();
+            maxIndex = Math.max(0, items.length - cols);
             const totalDots = maxIndex + 1;
             if (totalDots <= 1) return;
 
             for (let i = 0; i <= maxIndex; i++) {
               const dot = document.createElement("button");
               dot.classList.add("slider-dot");
+              dot.type = "button";
+              dot.setAttribute("aria-label", `${i + 1}번 슬라이드로 이동`);
               if (i === currentIndex) dot.classList.add("active");
               dot.addEventListener("click", () => {
-                currentIndex = i;
-                updateSliderPosition();
+                moveTo(i);
               });
               dotsContainer.appendChild(dot);
             }
@@ -1858,46 +1981,92 @@
           }
 
           prevBtn.addEventListener("click", () => {
-            currentIndex = currentIndex > 0 ? currentIndex - 1 : maxIndex;
-            updateSliderPosition();
+            moveTo(currentIndex > 0 ? currentIndex - 1 : maxIndex);
           });
 
           nextBtn.addEventListener("click", () => {
-            currentIndex = currentIndex < maxIndex ? currentIndex + 1 : 0;
-            updateSliderPosition();
+            moveTo(currentIndex < maxIndex ? currentIndex + 1 : 0);
           });
 
           // 모바일 스와이프 제어
           let startX = 0;
-          let isDragging = false;
+          let startY = 0;
+          let swipeAxis = null;
+          let isTouching = false;
+
+          function resetSwipe() {
+            startX = 0;
+            startY = 0;
+            swipeAxis = null;
+            isTouching = false;
+          }
+
           container.addEventListener(
             "touchstart",
             (e) => {
+              if (e.touches.length !== 1) return;
               startX = e.touches[0].clientX;
-              isDragging = true;
+              startY = e.touches[0].clientY;
+              swipeAxis = null;
+              isTouching = true;
             },
             { passive: true },
+          );
+
+          container.addEventListener(
+            "touchmove",
+            (e) => {
+              if (!isTouching || e.touches.length !== 1) return;
+
+              const distanceX = e.touches[0].clientX - startX;
+              const distanceY = e.touches[0].clientY - startY;
+              const absX = Math.abs(distanceX);
+              const absY = Math.abs(distanceY);
+
+              if (!swipeAxis && (absX > 8 || absY > 8)) {
+                swipeAxis = absX > absY * 1.15 ? "horizontal" : "vertical";
+              }
+
+              if (swipeAxis === "horizontal") {
+                e.preventDefault();
+              }
+            },
+            { passive: false },
           );
 
           container.addEventListener(
             "touchend",
             (e) => {
-              if (!isDragging) return;
+              if (!isTouching) return;
               const endX = e.changedTouches[0].clientX;
-              const distanceX = startX - endX;
+              const endY = e.changedTouches[0].clientY;
+              const distanceX = endX - startX;
+              const distanceY = endY - startY;
+              const threshold = Math.max(36, container.clientWidth * 0.08);
 
-              if (Math.abs(distanceX) > 40) {
-                if (distanceX > 0) {
-                  currentIndex = currentIndex < maxIndex ? currentIndex + 1 : 0;
-                } else if (distanceX < 0) {
-                  currentIndex = currentIndex > 0 ? currentIndex - 1 : maxIndex;
-                }
-                updateSliderPosition();
+              if (
+                swipeAxis === "horizontal" &&
+                Math.abs(distanceX) > threshold &&
+                Math.abs(distanceX) > Math.abs(distanceY)
+              ) {
+                const nextIndex =
+                  distanceX < 0
+                    ? currentIndex < maxIndex
+                      ? currentIndex + 1
+                      : 0
+                    : currentIndex > 0
+                      ? currentIndex - 1
+                      : maxIndex;
+                moveTo(nextIndex);
               }
-              isDragging = false;
+              resetSwipe();
             },
             { passive: true },
           );
+
+          container.addEventListener("touchcancel", resetSwipe, {
+            passive: true,
+          });
 
           window.addEventListener("resize", () => {
             const previousMax = maxIndex;
@@ -1908,7 +2077,8 @@
           });
 
           createDots();
-          setTimeout(updateSliderPosition, 150);
+          requestAnimationFrame(updateSliderPosition);
+          window.addEventListener("load", updateSliderPosition, { once: true });
         }
 
         initSlider("portfolio-slider");
