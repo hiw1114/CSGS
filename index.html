@@ -28,7 +28,7 @@
     />
 
     <style>
-      /* [추가] 부드러운 스크롤 이동 */
+      /* 부드러운 스크롤 이동 */
       html {
         scroll-behavior: smooth;
       }
@@ -142,9 +142,15 @@
         font-weight: 800;
         color: var(--primary);
         letter-spacing: -0.05em;
+        display: flex;
+        align-items: center;
+        position: relative; /* 모바일 메뉴 슬라이드 시 로고 최상단 유지를 위해 추가 */
+        z-index: 1001;
       }
-      .logo span {
+      .logo span.equals {
         color: var(--secondary);
+        margin: 0 4px;
+        font-weight: 900;
       }
       .nav-menu {
         display: flex;
@@ -166,6 +172,15 @@
         border-radius: 30px;
         font-weight: 700;
         font-size: 0.95rem;
+      }
+
+      /* 모바일 햄버거 메뉴 버튼 (PC에선 숨김) */
+      .hamburger {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
       }
 
       /* 메인 히어로 섹션 */
@@ -311,7 +326,7 @@
       /* 핵심 서비스 섹션 */
       .service-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
         gap: 30px;
       }
       .service-card {
@@ -321,6 +336,7 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         border: 1px solid var(--border-color);
         transition: 0.4s;
+        width: 100%;
       }
       .service-card:hover {
         transform: translateY(-10px);
@@ -520,6 +536,114 @@
         font-size: 0.95rem;
       }
 
+      /* 고객 만족의 목소리 (자동 슬라이드 흐름) 섹션 */
+      .review-section {
+        background-color: #fff;
+        overflow: hidden;
+      }
+      .marquee-wrapper {
+        position: relative;
+        width: 100vw;
+        max-width: 100%;
+        overflow: hidden;
+        padding: 20px 0;
+      }
+      /* 슬라이드 트랙 양 끝 페이드 효과 */
+      .marquee-wrapper::before,
+      .marquee-wrapper::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        width: 150px;
+        height: 100%;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .marquee-wrapper::before {
+        left: 0;
+        background: linear-gradient(to right, #fff 0%, transparent 100%);
+      }
+      .marquee-wrapper::after {
+        right: 0;
+        background: linear-gradient(to left, #fff 0%, transparent 100%);
+      }
+
+      /* [수정 3] 무한 루프 시 튀는 현상 방지를 위해 패딩(padding-left)을 제거하고 계산식 최적화 */
+      .marquee-track {
+        display: flex;
+        gap: 24px;
+        width: max-content;
+        animation: scroll-marquee 40s linear infinite;
+      }
+      /* 호버 및 터치 시 애니메이션 정지 */
+      .marquee-track:hover,
+      .marquee-track:active {
+        animation-play-state: paused;
+      }
+      @keyframes scroll-marquee {
+        0% {
+          transform: translateX(0);
+        }
+        /* gap이 24px이므로 전체 길이의 50% 이동 시 절반의 gap(12px)을 추가로 당겨주어야 정확히 이어집니다. */
+        100% {
+          transform: translateX(calc(-50% - 12px));
+        }
+      }
+
+      .review-card {
+        background: var(--bg-light);
+        padding: 30px;
+        border-radius: 20px;
+        width: 380px;
+        flex-shrink: 0;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+      }
+      .review-card .stars {
+        color: #f59e0b;
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+        letter-spacing: 2px;
+      }
+      .review-card h4 {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+      .review-card p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+      .review-card .reviewer {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .reviewer-avatar {
+        width: 40px;
+        height: 40px;
+        background: #e5e7eb;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--text-muted);
+      }
+      .reviewer-info span {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+      .reviewer-info small {
+        font-size: 0.8rem;
+        color: #9ca3af;
+      }
+
       /* 뉴스레터 / 청소 정보 섹션 */
       #news-slider .news-card {
         flex: 0 0 calc(33.333% - 20px);
@@ -586,7 +710,7 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.01);
       }
       .faq-item summary {
-        padding: 24px 30px;
+        padding: 24px;
         font-size: 1.1rem;
         font-weight: 600;
         cursor: pointer;
@@ -605,12 +729,13 @@
         color: var(--secondary);
         font-weight: 300;
         transition: transform 0.3s;
+        margin-left: 24px;
       }
       .faq-item[open] summary::after {
         transform: rotate(45deg);
       }
       .faq-content {
-        padding: 0 30px 24px 30px;
+        padding: 24px;
         color: var(--text-muted);
         font-size: 1rem;
         line-height: 1.7;
@@ -674,11 +799,11 @@
         backdrop-filter: blur(5px);
         z-index: 9999;
         display: none;
-        align-items: center;
+        align-items: center; /* 데스크탑 중앙 정렬 */
         justify-content: center;
         opacity: 0;
         transition: opacity 0.3s ease;
-        cursor: pointer; /* [추가] 사파리 터치 인식을 위한 커서 포인터 */
+        cursor: pointer;
       }
       .modal-overlay.active {
         display: flex;
@@ -693,9 +818,9 @@
         position: relative;
         text-align: center;
         transform: translateY(20px);
-        transition: transform 0.3s ease;
+        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-        cursor: default; /* 배경 클릭과 구분 */
+        cursor: default;
       }
       .modal-overlay.active .modal-content {
         transform: translateY(0);
@@ -769,7 +894,79 @@
       }
 
       @media (max-width: 768px) {
-        /* [추가] 1. 모바일 환경에서 hover(애니메이션, 그림자 등) 효과 제거 */
+        /* [수정 1] 모바일 환경 햄버거 메뉴 애니메이션 및 스타일 설정 */
+        .hamburger {
+          display: block;
+          position: relative;
+          width: 28px;
+          height: 20px;
+          z-index: 1001; /* 메뉴보다 항상 위에 표시 */
+        }
+        .hamburger span {
+          position: absolute;
+          left: 0;
+          width: 100%;
+          height: 3px;
+          background-color: var(--primary);
+          border-radius: 3px;
+          transition: all 0.3s ease-in-out;
+        }
+        .hamburger span:nth-child(1) {
+          top: 0;
+        }
+        .hamburger span:nth-child(2) {
+          top: 50%;
+          transform: translateY(-50%);
+        }
+        .hamburger span:nth-child(3) {
+          bottom: 0;
+        }
+
+        /* 햄버거 클릭 시 'X' 전환 애니메이션 */
+        .hamburger.active span:nth-child(1) {
+          top: 50%;
+          transform: translateY(-50%) rotate(45deg);
+        }
+        .hamburger.active span:nth-child(2) {
+          opacity: 0;
+          width: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+          top: 50%;
+          transform: translateY(-50%) rotate(-45deg);
+        }
+
+        /* [수정 2] 위에서 아래로 떨어지는 메뉴 애니메이션 설정 */
+        .nav-menu {
+          position: fixed;
+          top: -100vh; /* 화면 위쪽으로 숨김 */
+          left: 0;
+          right: 0;
+          width: 100%;
+          height: auto;
+          padding: 80px 0 40px; /* 로고/햄버거(60px) 영역 확보 후 여백 */
+          background: rgba(255, 255, 255, 0.98);
+          backdrop-filter: blur(10px);
+          flex-direction: column;
+          justify-content: flex-start;
+          gap: 30px;
+          transition: top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); /* 아래로 이동 */
+          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+          z-index: 999; /* 로고와 햄버거 버튼 아래로 깔리게 설정 */
+          border-bottom-left-radius: 20px;
+          border-bottom-right-radius: 20px;
+        }
+        .nav-menu.active {
+          top: 0; /* 화면 아래로 등장 */
+        }
+        .nav-menu a {
+          font-size: 1.3rem;
+        }
+        .btn-nav-kakao {
+          display: none;
+        }
+
+        /* 모바일 터치 최적화 (hover 제거) */
         .btn-kakao-large:hover {
           transform: none;
           box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
@@ -792,6 +989,16 @@
           transform: none;
         }
 
+        .service-grid {
+          grid-template-columns: 1fr;
+          justify-items: center; /* 카드 중앙 정렬 */
+          gap: 24px;
+        }
+        .service-card {
+          max-width: 420px; /* 모바일 환경 카드 너비 제한 */
+          margin: 0 auto;
+        }
+
         .hero h1 {
           font-size: 2.6rem;
         }
@@ -803,9 +1010,6 @@
         }
         .nav-wrapper {
           height: 60px;
-        }
-        .nav-menu {
-          display: none;
         }
         body {
           padding-bottom: 70px;
@@ -839,6 +1043,26 @@
           font-size: 2.3rem;
         }
 
+        .marquee-wrapper::before,
+        .marquee-wrapper::after {
+          width: 40px;
+        } /* 모바일 페이드 영역 축소 */
+
+        .modal-overlay {
+          align-items: flex-end; /* 하단 정렬 */
+        }
+        .modal-content {
+          width: 100%;
+          max-width: 100%;
+          border-radius: 24px 24px 0 0; /* 위쪽만 둥글게 */
+          transform: translateY(100%); /* 아래 숨김 */
+          padding: 40px 20px calc(20px + env(safe-area-inset-bottom, 20px)); /* 아이폰 하단 여백 대응 */
+          margin: 0;
+        }
+        .modal-overlay.active .modal-content {
+          transform: translateY(0); /* 슬라이드 업 */
+        }
+
         /* 하단 고정 탭 바 */
         .bottom-nav {
           display: flex;
@@ -851,7 +1075,7 @@
           z-index: 1000;
           justify-content: space-around;
           align-items: center;
-          padding: 8px 0 8px;
+          padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
           border-top: 1px solid var(--border-color);
         }
         .bottom-nav-item {
@@ -877,9 +1101,17 @@
   <body id="hero">
     <header id="main-header">
       <div class="container nav-wrapper">
-        <a href="#hero" class="logo">청소<span>공식</span></a>
+        <a href="#hero" class="logo">청소<span class="equals">=</span>공식</a>
+
+        <button class="hamburger" aria-label="메뉴 열기">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
         <nav class="nav-menu">
           <a href="#portfolio">시공 사례</a>
+          <a href="#reviews">고객 후기</a>
           <a href="#news">청소 꿀팁</a>
           <a href="#faq">Q&A</a>
           <a href="#" class="btn-nav-kakao open-modal">상담하기</a>
@@ -958,7 +1190,7 @@
             <article class="service-card reveal delay-100">
               <div class="img-wrapper">
                 <img
-                  src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=800&auto=format&fit=crop"
+                  src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=400"
                   alt="신축 아파트 입주청소"
                   class="service-img"
                 />
@@ -981,7 +1213,7 @@
             <article class="service-card reveal delay-200">
               <div class="img-wrapper">
                 <img
-                  src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?q=80&w=800&auto=format&fit=crop"
+                  src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?auto=format&fit=crop&q=80&w=400"
                   alt="패브릭 소파 세탁"
                   class="service-img"
                 />
@@ -1004,7 +1236,7 @@
             <article class="service-card reveal delay-300">
               <div class="img-wrapper">
                 <img
-                  src="https://images.unsplash.com/photo-1584622781564-1d987f7333c1?q=80&w=800&auto=format&fit=crop"
+                  src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=400"
                   alt="욕실 줄눈 시공"
                   class="service-img"
                 />
@@ -1130,6 +1362,141 @@
               ›
             </button>
             <div class="slider-dots"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="reviews" class="review-section">
+        <div class="section-header reveal">
+          <h2 class="section-title">고객 만족의 목소리</h2>
+          <p class="section-desc">
+            청소공식을 먼저 경험하신 고객님들의 리얼한 찐 후기를 확인해 보세요.
+          </p>
+        </div>
+
+        <div class="marquee-wrapper reveal delay-100">
+          <div class="marquee-track">
+            <div class="review-card">
+              <div class="stars">★★★★★</div>
+              <h4>"진짜 돈이 하나도 안 아깝네요!"</h4>
+              <p>
+                인테리어 후 분진 가루가 너무 많아서 걱정했는데 서랍장 하나하나
+                다 빼서 닦아주시는 거 보고 감동했습니다. 친환경 세제라 냄새도 안
+                나서 아이 있는 집에 최고예요.
+              </p>
+              <div class="reviewer">
+                <div class="reviewer-avatar">김</div>
+                <div class="reviewer-info">
+                  <span>김*지 고객님</span><small>부산 해운대구 입주청소</small>
+                </div>
+              </div>
+            </div>
+            <div class="review-card">
+              <div class="stars">★★★★★</div>
+              <h4>"줄눈 시공 대박입니다."</h4>
+              <p>
+                매번 락스로 화장실 청소하느라 너무 스트레스였는데 줄눈 시공하고
+                나니 물청소만 해도 깨끗합니다. 타일 색상이랑도 너무 잘 어울려요.
+              </p>
+              <div class="reviewer">
+                <div class="reviewer-avatar">이</div>
+                <div class="reviewer-info">
+                  <span>이*훈 고객님</span><small>부산 동래구 줄눈시공</small>
+                </div>
+              </div>
+            </div>
+            <div class="review-card">
+              <div class="stars">★★★★★</div>
+              <h4>"소파에서 이런 땟물이 나올 줄이야.."</h4>
+              <p>
+                강아지가 실수한 자국 때문에 고민하다 맡겼는데, 묵은 때랑 진드기
+                빨려 들어가는 거 보고 경악했어요. 케어 후에 뽀송뽀송해진 소파
+                너무 만족합니다!
+              </p>
+              <div class="reviewer">
+                <div class="reviewer-avatar">박</div>
+                <div class="reviewer-info">
+                  <span>박*영 고객님</span
+                  ><small>양산 매트리스/소파 케어</small>
+                </div>
+              </div>
+            </div>
+            <div class="review-card">
+              <div class="stars">★★★★★</div>
+              <h4>"마감 검수 때 감동했어요"</h4>
+              <p>
+                팀장님이 직접 검수하면서 제가 미처 못 본 부분까지 짚어주시고
+                설명해 주셨어요. 하청 없이 본사 직영이라 확실히 책임감이
+                남다르십니다.
+              </p>
+              <div class="reviewer">
+                <div class="reviewer-avatar">최</div>
+                <div class="reviewer-info">
+                  <span>최*아 고객님</span><small>부산 남구 이사청소</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="review-card">
+              <div class="stars">★★★★★</div>
+              <h4>"진짜 돈이 하나도 안 아깝네요!"</h4>
+              <p>
+                인테리어 후 분진 가루가 너무 많아서 걱정했는데 서랍장 하나하나
+                다 빼서 닦아주시는 거 보고 감동했습니다. 친환경 세제라 냄새도 안
+                나서 아이 있는 집에 최고예요.
+              </p>
+              <div class="reviewer">
+                <div class="reviewer-avatar">김</div>
+                <div class="reviewer-info">
+                  <span>김*지 고객님</span><small>부산 해운대구 입주청소</small>
+                </div>
+              </div>
+            </div>
+            <div class="review-card">
+              <div class="stars">★★★★★</div>
+              <h4>"줄눈 시공 대박입니다."</h4>
+              <p>
+                매번 락스로 화장실 청소하느라 너무 스트레스였는데 줄눈 시공하고
+                나니 물청소만 해도 깨끗합니다. 타일 색상이랑도 너무 잘 어울려요.
+              </p>
+              <div class="reviewer">
+                <div class="reviewer-avatar">이</div>
+                <div class="reviewer-info">
+                  <span>이*훈 고객님</span><small>부산 동래구 줄눈시공</small>
+                </div>
+              </div>
+            </div>
+            <div class="review-card">
+              <div class="stars">★★★★★</div>
+              <h4>"소파에서 이런 땟물이 나올 줄이야.."</h4>
+              <p>
+                강아지가 실수한 자국 때문에 고민하다 맡겼는데, 묵은 때랑 진드기
+                빨려 들어가는 거 보고 경악했어요. 케어 후에 뽀송뽀송해진 소파
+                너무 만족합니다!
+              </p>
+              <div class="reviewer">
+                <div class="reviewer-avatar">박</div>
+                <div class="reviewer-info">
+                  <span>박*영 고객님</span
+                  ><small>양산 매트리스/소파 케어</small>
+                </div>
+              </div>
+            </div>
+            <div class="review-card">
+              <div class="stars">★★★★★</div>
+              <h4>"마감 검수 때 감동했어요"</h4>
+              <p>
+                팀장님이 직접 검수하면서 제가 미처 못 본 부분까지 짚어주시고
+                설명해 주셨어요. 하청 없이 본사 직영이라 확실히 책임감이
+                남다르십니다.
+              </p>
+              <div class="reviewer">
+                <div class="reviewer-avatar">최</div>
+                <div class="reviewer-info">
+                  <span>최*아 고객님</span><small>부산 남구 이사청소</small>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -1266,6 +1633,18 @@
                 및 합의 후 소정의 추가 비용이 적용될 수 있습니다.
               </div>
             </details>
+            <a
+              href="#"
+              style="
+                display: block;
+                padding: 24px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                text-align: center;
+                color: #3b82f6;
+              "
+              >자주 묻는 질문 (FAQ) 더 보기 →</a
+            >
           </div>
         </div>
       </section>
@@ -1277,7 +1656,6 @@
             365일 언제나 열려있습니다. 원하시는 서비스와 현장 상태를 알려주시면
             상세 견적을 신속하게 답변해 드립니다.
           </p>
-          <!-- <a href="tel:0507-1395-0475" class="phone-number">0507-1395-0475</a> -->
           <a
             href="#"
             class="btn-kakao-large open-modal"
@@ -1292,7 +1670,8 @@
       <div class="container">
         <p>상호명: 청소공식 | 대표자: 황인원</p>
         <p>사업자등록번호: 580-66-00555</p>
-        <p>이메일: support@cleanmaster.com</p>
+        <p>주소: 부산 동래구 사직동 138-1</p>
+        <p>이메일: hiw1114@naver.com</p>
         <p style="margin-top: 20px; color: #374151">
           © 2026 청소공식. All rights reserved.
         </p>
@@ -1301,24 +1680,19 @@
 
     <nav class="bottom-nav">
       <a href="#hero" class="bottom-nav-item">
-        <span class="icon">🏠</span>
-        <span class="text">홈</span>
+        <span class="icon">🏠</span><span class="text">홈</span>
       </a>
       <a href="#portfolio" class="bottom-nav-item">
-        <span class="icon">✨</span>
-        <span class="text">시공사례</span>
+        <span class="icon">✨</span><span class="text">시공사례</span>
       </a>
       <a href="#news" class="bottom-nav-item">
-        <span class="icon">📰</span>
-        <span class="text">청소꿀팁</span>
+        <span class="icon">📰</span><span class="text">청소꿀팁</span>
       </a>
       <a href="#faq" class="bottom-nav-item">
-        <span class="icon">💡</span>
-        <span class="text">Q&A</span>
+        <span class="icon">💡</span><span class="text">Q&A</span>
       </a>
       <a href="#" class="bottom-nav-item highlight open-modal">
-        <span class="icon">📝</span>
-        <span class="text">상담하기</span>
+        <span class="icon">📝</span><span class="text">상담하기</span>
       </a>
     </nav>
 
@@ -1345,7 +1719,7 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        /* 1. 스크롤 페이드 애니메이션 (Reveal Object) */
+        // --- 1. 스크롤 페이드 애니메이션 (Reveal) ---
         const reveals = document.querySelectorAll(".reveal");
         const revealOnScroll = new IntersectionObserver(
           (entries, observer) => {
@@ -1360,30 +1734,46 @@
         );
         reveals.forEach((reveal) => revealOnScroll.observe(reveal));
 
-        /* 2. 모바일 스크롤 반응형 상단 헤더 숨김/표시 처리 */
-        let lastScrollTop = 0;
+        // --- 2. 네비게이션 제어 (모바일 햄버거 메뉴) ---
+        // [수정 4] 스크롤 시 상단 네비를 숨기던 기존 코드를 삭제하여 네비가 상단에 항상 고정되게 만들었습니다.
         const header = document.getElementById("main-header");
-        window.addEventListener("scroll", () => {
-          if (window.innerWidth <= 768) {
-            let scrollTop =
-              window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop > lastScrollTop && scrollTop > 80) {
-              header.style.top = "-80px";
-            } else {
-              header.style.top = "0";
-            }
-            lastScrollTop = scrollTop;
-          } else {
-            header.style.top = "0";
-          }
+        const hamburger = document.querySelector(".hamburger");
+        const navMenu = document.querySelector(".nav-menu");
+
+        // 햄버거 토글
+        if (hamburger) {
+          hamburger.addEventListener("click", () => {
+            navMenu.classList.toggle("active");
+            hamburger.classList.toggle("active"); // [수정 1] X 애니메이션 토글 추가
+          });
+        }
+        // 메뉴 클릭 시 닫기
+        navMenu.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            navMenu.classList.remove("active");
+            hamburger.classList.remove("active"); // 메뉴 클릭 시 X를 다시 햄버거로 되돌림
+          });
         });
 
-        /* 3. 모달 팝업(상담하기) 제어 스크립트 */
+        // --- 3. FAQ 아코디언 상호 배타적 제어 (하나만 열리게) ---
+        const faqItems = document.querySelectorAll(".faq-item");
+        faqItems.forEach((item) => {
+          item.addEventListener("toggle", (e) => {
+            if (item.open) {
+              faqItems.forEach((otherItem) => {
+                if (otherItem !== item && otherItem.open) {
+                  otherItem.removeAttribute("open");
+                }
+              });
+            }
+          });
+        });
+
+        // --- 4. 모달 팝업 제어 ---
         const modalBtns = document.querySelectorAll(".open-modal");
         const modal = document.getElementById("contactModal");
         const closeBtn = document.getElementById("closeModal");
 
-        // 모달 열기
         modalBtns.forEach((btn) => {
           btn.addEventListener("click", (e) => {
             e.preventDefault();
@@ -1391,28 +1781,21 @@
           });
         });
 
-        // X 버튼으로 모달 닫기
-        closeBtn.addEventListener("click", () => {
-          modal.classList.remove("active");
-        });
-
-        // [수정] 2. 모달창 바깥 배경 클릭 시 닫기 (사파리 터치 인식 추가)
+        closeBtn.addEventListener("click", () =>
+          modal.classList.remove("active"),
+        );
         window.addEventListener("click", (e) => {
-          if (e.target === modal) {
-            modal.classList.remove("active");
-          }
+          if (e.target === modal) modal.classList.remove("active");
         });
         window.addEventListener(
           "touchstart",
           (e) => {
-            if (e.target === modal) {
-              modal.classList.remove("active");
-            }
+            if (e.target === modal) modal.classList.remove("active");
           },
           { passive: true },
         );
 
-        /* 4. 고성능 슬라이더 핵심 제어 스크립트 기능 정의 */
+        // --- 5. 커스텀 슬라이더 로직 ---
         function initSlider(sliderId) {
           const container = document.getElementById(sliderId);
           if (!container) return;
@@ -1438,7 +1821,6 @@
             cols = getColumns();
             maxIndex = Math.max(0, items.length - cols);
 
-            // 인덱스 안전장치
             if (currentIndex > maxIndex) currentIndex = maxIndex;
             if (currentIndex < 0) currentIndex = 0;
 
@@ -1447,8 +1829,6 @@
               const moveDistance = currentIndex * (itemWidth + gap);
               track.style.transform = `translateX(-${moveDistance}px)`;
             }
-
-            // 하단 점(도트) 상태 제어 업데이트
             updateDots();
           }
 
@@ -1477,26 +1857,17 @@
             });
           }
 
-          // [수정] 3. 무한 루프 기능 (버튼 클릭)
           prevBtn.addEventListener("click", () => {
-            if (currentIndex > 0) {
-              currentIndex--;
-            } else {
-              currentIndex = maxIndex; // 무한 루프 (뒤로 감기)
-            }
+            currentIndex = currentIndex > 0 ? currentIndex - 1 : maxIndex;
             updateSliderPosition();
           });
 
           nextBtn.addEventListener("click", () => {
-            if (currentIndex < maxIndex) {
-              currentIndex++;
-            } else {
-              currentIndex = 0; // 무한 루프 (처음으로)
-            }
+            currentIndex = currentIndex < maxIndex ? currentIndex + 1 : 0;
             updateSliderPosition();
           });
 
-          // [수정] 3. 무한 루프 기능 (모바일 스와이프 제어)
+          // 모바일 스와이프 제어
           let startX = 0;
           let isDragging = false;
           container.addEventListener(
@@ -1532,9 +1903,7 @@
             const previousMax = maxIndex;
             cols = getColumns();
             maxIndex = Math.max(0, items.length - cols);
-            if (previousMax !== maxIndex) {
-              createDots();
-            }
+            if (previousMax !== maxIndex) createDots();
             updateSliderPosition();
           });
 
